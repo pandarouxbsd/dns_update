@@ -18,3 +18,4 @@ jobs:
         repository: pandaroux/gomgb-dns-update
         tags: latest, ${{ github.sha }}
         push: false
+
