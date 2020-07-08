@@ -3,7 +3,7 @@
 import requests, json
 import os
 
-domain = "gomgb.fr"
+domain = os.environ.get("DOMAIN")
 gandi_api_url = "api.gandi.net/v5/livedns/"
 ipinfo_url = "ipinfo.io"
 
@@ -38,3 +38,5 @@ if (current_ipv4 != gandi_ipv4):
 	if (res.status_code != 200):
 		raise ValueError(f"Status code incorrect when calling {url_update_domain} ({res.status_code}): {res.text}")
 	print("IP changed")
+else:
+	print("IP checked, no changes.")
