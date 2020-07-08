@@ -1,0 +1,21 @@
+name: dns-update
+
+on:
+  push:
+    branches: [ feature*, add* ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1.1.0
+      with:
+        repository: pandaroux/gomgb-dns-update
+        tags: latest, ${{ github.sha }}
+        push: false
+

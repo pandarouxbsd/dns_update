@@ -1,14 +1,22 @@
 #!/usr/bin/env python3
 
 import requests, json
-import os
+import os, logging, time
 
-domain = "gomgb.fr"
+logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
+logging.info("Start dns-update")
+
+domain = os.environ.get("DOMAIN")
+if domain == None:
+	logging.error("No DOMAIN environment variable")
+	raise EnvironmentError("Missing key DOMAIN")
+
 gandi_api_url = "api.gandi.net/v5/livedns/"
 ipinfo_url = "ipinfo.io"
 
 GANDI_API_KEY = os.environ.get("GANDI_API_KEY")
 if GANDI_API_KEY == None:
+	logging.error("No GANDI_API_KEY")
 	raise EnvironmentError("Missing key GANDI_API_KEY")
 
 url_get_domain = f"https://{gandi_api_url}/domains/{domain}/records"
@@ -36,5 +44,8 @@ updated_record_json = json.dumps(updated_record)
 if (current_ipv4 != gandi_ipv4):
 	res = requests.put(url_update_domain, headers=headers, data=updated_record_json)
 	if (res.status_code != 200):
+		logging.error("Status code incorrect when calling %s (%s, %s)", url_update_domain, res.status_code, res.text)
 		raise ValueError(f"Status code incorrect when calling {url_update_domain} ({res.status_code}): {res.text}")
-	print("IP changed")
+	logging.info("IP Changed")
+else:
+	logging.info("IP checked, no changes.")
